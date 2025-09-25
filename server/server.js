@@ -1,12 +1,16 @@
 const express = require('express');
 const server = express();
-
-const port = 5000;
+const mongoDB = require('./db/connect');
+require('dotenv').config();
 
 server.get('/', (req,res)=>{
   res.send("Hello world");
 })
 
-server.listen(port, ()=>{
-  console.log(`Server is listening on port ${port}`);
+mongoDB(process.env.MONGO_URI);
+
+const PORT = process.env.PORT;
+
+server.listen(PORT, ()=>{
+  console.log(`Server is listening on port ${PORT}`);
 })
