@@ -1,10 +1,23 @@
 const express = require('express');
-const mongoDB = require('./db/connect');
 const cors = require('cors');
+const passport = require('passport');
+const flash = require('express-flash');
+const session = require('express-session');
+const mongoDB = require('./db/connect');
 const tasks = require('./routes/tasks');
+const users = require('./routes/users');
+const User = require('./models/User');
+const initializePassport = require('./config/passport');
 require('dotenv').config();
 
 const server = express();
+
+initializePassport(passport, async (email) => {
+  return await User.findOne({ email });
+});
+
+//middleware
+server.use(express.json());
 
 server.use(
   cors({
@@ -14,15 +27,22 @@ server.use(
   })
 );
 
-//middleware
-server.use(express.json());
+server.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+
+server.use(passport.initialize());
+server.use(passport.session());
+
+server.use(flash());
 
 //routes
 server.use('/api/v1/tasks', tasks);
-
-server.get('/', (req, res) => {
-  res.send('Hello world');
-});
+server.use('/api/v1/users', users);
 
 //start server
 const start = async () => {

@@ -1,27 +1,34 @@
-import { useState } from 'react';
-import { useEffect } from 'react';
-import axios from 'axios';
+import { useState, useEffect } from 'react';
+
+import api from '../utils/api';
 
 import Navbar from '../components/Navbar';
 import TaskForm from '../components/TaskForm';
 import TaskList from '../components/TaskList';
 import Modal from '../components/Modal';
 
-const url = 'http://localhost:5000/api/v1/tasks';
-
 export default () => {
   const [tasks, setTasks] = useState([]);
+  const [user, setUser] = useState(null);
+  const [addingTask, setAddingTask] = useState(null);
   const [editingTask, setEditingTask] = useState(null);
 
   useEffect(() => {
-    axios.get(url).then((res) => {
+    api.get('/tasks').then((res) => {
       setTasks(res.data.task);
     });
   }, []);
 
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem('user'));
+    if (storedUser) {
+      setUser(storedUser);
+    }
+  }, []);
+
   const addTasks = async (text) => {
     try {
-      const res = await axios.post(url, {
+      const res = await api.post('tasks', {
         name: text,
         completed: false,
         priority: 'medium',
@@ -32,9 +39,13 @@ export default () => {
     }
   };
 
+  const handleAdd = () => {
+    setAddingTask((prev) => !prev);
+  };
+
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`${url}/${id}`);
+      await api.delete(`tasks/${id}`);
 
       setTasks((prev) => prev.filter((task) => task._id !== id));
     } catch (err) {
@@ -50,7 +61,7 @@ export default () => {
   return (
     <>
       <header>
-        <Navbar />
+        <Navbar user={user} />
       </header>
       <main>
         <div className="flex gap-x-4 mt-16 justify-center items-center">
@@ -65,15 +76,28 @@ export default () => {
           </button>
         </div>
 
-        <TaskForm addTasks={addTasks} tasks={tasks} />
+        <div className="px-8">
+          <button
+            onClick={handleAdd}
+            className="bg-blue-500 px-8 py-4 mt-8 rounded-lg text-white cursor-pointer"
+          >
+            Add Task
+          </button>
+        </div>
 
-        <div className="flex flex-col gap-y-8 mt-8 w-2/3 justify-self-center px-8 text-3xl bg-blue-500">
+        <div className="flex flex-col gap-y-8 mt-8 w-full justify-self-start px-8 text-3xl">
           <TaskList
             tasks={tasks}
             handleDelete={handleDelete}
             handleEdit={handleEdit}
           />
         </div>
+
+        {addingTask ? (
+          <Modal title="Enter a new task" onClose={handleAdd}>
+            <TaskForm addTasks={addTasks} tasks={tasks} onClose={handleAdd} />
+          </Modal>
+        ) : null}
 
         {editingTask ? (
           <Modal title="Editing" onClose={() => setEditingTask(null)}>
@@ -83,7 +107,7 @@ export default () => {
                 if (!newName) return;
 
                 try {
-                  const res = await axios.patch(`${url}/${editingTask._id}`, {
+                  const res = await api.patch(`${'tasks'}/${editingTask._id}`, {
                     name: newName,
                   });
 
