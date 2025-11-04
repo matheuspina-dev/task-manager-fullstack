@@ -1,5 +1,5 @@
 import Navbar from '../components/Navbar';
-import { loginUser } from '../utils/authService';
+import { loginUser } from '../services/authService';
 
 export default () => {
   const handleSubmit = async (formData) => {

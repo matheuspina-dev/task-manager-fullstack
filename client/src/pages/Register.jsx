@@ -1,5 +1,5 @@
 import Navbar from '../components/Navbar';
-import { registerUser } from '../utils/authService';
+import { registerUser } from '../services/authService';
 
 export default () => {
   const handleSubmit = async (formData) => {
