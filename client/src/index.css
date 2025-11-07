@@ -1,1 +1,17 @@
 @import 'tailwindcss';
+
+@theme {
+  --color-tanager-primary: #6366f1;
+  --color-tanager-primary-light: #c7d2fe;
+  --color-tanager-primary-bg: #e0e7ff;
+  --color-tanager-accent: #a78bfa;
+  --color-tanager-info: #3b82f6;
+  --color-tanager-success: #22c55e;
+  --color-tanager-warning: #fbbf24;
+  --color-tanager-danger: #ef4444;
+  --color-tanager-bg: #ffffff;
+  --color-tanager-bg-alt: #f9fafb;
+  --color-tanager-border: #e5e7eb;
+  --color-tanager-text: #1f2937;
+  --color-tanager-text-muted: #6b7280;
+}

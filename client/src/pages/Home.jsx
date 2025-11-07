@@ -101,7 +101,7 @@ export default () => {
         <div>
           <button
             onClick={() => setAddingTask(true)}
-            className="bg-blue-500 px-8 py-4 mt-8 rounded-lg text-white cursor-pointer"
+            className="bg-tanager-primary px-8 py-4 mt-8 rounded-lg text-white cursor-pointer"
           >
             Add Task
           </button>
