@@ -9,6 +9,7 @@ import storage from '../services/storage';
 import Sidebar from '../components/Sidebar';
 import SidebarItem from '../components/SidebarItem';
 import { CiCalendarDate } from 'react-icons/ci';
+import ColorPalette from '../ColorPalette';
 
 export default () => {
   const [user, setUser] = useState(null);
@@ -92,6 +93,7 @@ export default () => {
           user={user}
           handleLogout={handleLogout}
           sidebarWidth={sidebarWidth}
+          activeView={activeView}
         />
       </header>
       <main
@@ -142,6 +144,7 @@ export default () => {
           </Modal>
         ) : null}
       </main>
+      <ColorPalette />
     </div>
   );
 };
