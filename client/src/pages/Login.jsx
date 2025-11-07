@@ -1,7 +1,10 @@
+import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { loginUser } from '../services/authService';
 
 export default () => {
+  const navigate = useNavigate();
+
   const handleSubmit = async (formData) => {
     const email = formData.get('email');
     const password = formData.get('password');
@@ -9,8 +12,7 @@ export default () => {
     try {
       const res = await loginUser({ email, password });
       localStorage.setItem('user', JSON.stringify(res.user));
-      alert('login successful');
-      console.log(res);
+      navigate('/');
     } catch (err) {
       console.error(err);
       alert('Invalid credentials');
@@ -37,9 +39,19 @@ export default () => {
             name="password"
             className="border-1 border-solid px-8 py-4 rounded-lg text-xl"
           />
-          <button className="border-1 border-solid px-8 py-4 rounded-lg text-xl mt-4 cursor-pointer bg-blue-500">
+          <span className="cursor-pointer">Forgot your password?</span>
+          <button className="border-1 border-solid px-8 py-4 rounded-lg text-xl cursor-pointer bg-blue-500">
             Login
           </button>
+          <div className="flex justify-center items-center gap-4">
+            <span>Don't have an account?</span>
+            <Link
+              to={'/register'}
+              className="border-1 border-solid rounded-3xl px-8 py-2"
+            >
+              Sign up
+            </Link>
+          </div>
         </form>
       </main>
     </>

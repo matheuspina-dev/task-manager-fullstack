@@ -10,6 +10,7 @@ export default (props) => {
               type="checkbox"
               checked={task.completed}
               onChange={() => props.toggleCompleted(task._id, !task.completed)}
+              className="w-6 h-6"
             />
             <h1>{task.name}</h1>
           </div>

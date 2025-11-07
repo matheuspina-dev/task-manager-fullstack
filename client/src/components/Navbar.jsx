@@ -23,7 +23,13 @@ export default (props) => {
   }, []);
 
   return (
-    <nav className="flex justify-evenly items-center bg-blue-500 py-8 text-3xl">
+    <nav
+      className="fixed top-0 right-0 h-16 flex justify-between items-center bg-blue-500 py-8 text-3xl transition-all duration-300"
+      style={{
+        left: props.sidebarWidth,
+        width: `calc(100% - ${props.sidebarWidth})`,
+      }}
+    >
       <div className="flex items-center gap-x-4">
         <Link to="/">
           <HiDesktopComputer />
@@ -34,7 +40,7 @@ export default (props) => {
       </div>
       {!props.user ? (
         <div className="">
-          <ul className="flex gap-x-4">
+          <ul className="flex gap-x-8">
             <li>
               <Link to="/login">Login</Link>
             </li>
@@ -50,7 +56,7 @@ export default (props) => {
           </button>
 
           {showMenu ? (
-            <div className="text-2xl absolute left-1/2 mt-2 bg-white rounded-lg shadow-md p-8 transform -translate-x-1/2 flex flex-col items-center gap-y-4">
+            <div className="text-2xl absolute left-1/2 mt-2 bg-white rounded-lg shadow-md p-8 transform -translate-x-1/2 flex flex-col items-center gap-y-4 w-auto min-w-max">
               <h3 className="whitespace-nowrap">Hello, {props.user.name}</h3>
               <Link to="/profile">Profile page</Link>
               <button

@@ -6,11 +6,16 @@ import TaskForm from '../components/tasks/TaskForm';
 import Modal from '../components/Modal';
 import useTasks from '../hooks/useTasks';
 import storage from '../services/storage';
+import Sidebar from '../components/Sidebar';
+import SidebarItem from '../components/SidebarItem';
+import { CiCalendarDate } from 'react-icons/ci';
 
 export default () => {
   const [user, setUser] = useState(null);
   const [addingTask, setAddingTask] = useState(null);
   const [editingTask, setEditingTask] = useState(null);
+  const [sidebarWidth, setSidebarWidth] = useState('21.5rem');
+  const [activeView, setActiveView] = useState('all');
 
   useEffect(() => {
     const storedUser = storage.getUser();
@@ -30,25 +35,70 @@ export default () => {
     updateTask(id, { completed: newStatus });
   };
 
-  return (
-    <>
-      <header>
-        <Navbar user={user} handleLogout={handleLogout} />
-      </header>
-      <main>
-        <div className="flex gap-x-4 mt-16 justify-center items-center">
-          <button className="bg-blue-500 px-8 py-4 rounded-lg text-white cursor-pointer">
-            All
-          </button>
-          <button className="bg-blue-500 px-8 py-4 rounded-lg text-white cursor-pointer">
-            Today
-          </button>
-          <button className="bg-blue-500 px-8 py-4 rounded-lg text-white cursor-pointer">
-            Completed
-          </button>
-        </div>
+  const isToday = (dateStr) => {
+    if (!dateStr) return false;
 
-        <div className="px-8">
+    const taskDate = dateStr.slice(0, 10);
+
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    const todayLocal = `${year}-${month}-${day}`;
+
+    return taskDate === todayLocal;
+  };
+
+  const filteredTasks = tasks.filter((task) => {
+    if (activeView === 'all') return true;
+    if (activeView === 'today') return isToday(task.dueDate);
+    if (activeView === 'completed') return task.completed;
+    return true;
+  });
+
+  return (
+    <div className="flex">
+      <header className="flex">
+        <Sidebar onWidthChange={setSidebarWidth} user={user}>
+          <SidebarItem
+            icon={<CiCalendarDate size={20} />}
+            text="All"
+            onClick={() => setActiveView('all')}
+            active={activeView === 'all'}
+          />
+          <SidebarItem
+            icon={<CiCalendarDate size={20} />}
+            text="Today"
+            onClick={() => setActiveView('today')}
+            active={activeView === 'today'}
+          />
+          <SidebarItem
+            icon={<CiCalendarDate size={20} />}
+            text="Completed"
+            alert
+            onClick={() => setActiveView('completed')}
+            active={activeView === 'completed'}
+          />
+          <SidebarItem
+            icon={<CiCalendarDate size={20} />}
+            text="Statisctics"
+            alert
+          />
+          <hr className="my-3" />
+          <SidebarItem icon={<CiCalendarDate size={20} />} text="Settings" />
+          <SidebarItem icon={<CiCalendarDate size={20} />} text="Help" />
+        </Sidebar>
+        <Navbar
+          user={user}
+          handleLogout={handleLogout}
+          sidebarWidth={sidebarWidth}
+        />
+      </header>
+      <main
+        className="p-8 pt-20 min-h-screen w-screen transition-all duration-300"
+        style={{ marginLeft: sidebarWidth }}
+      >
+        <div>
           <button
             onClick={() => setAddingTask(true)}
             className="bg-blue-500 px-8 py-4 mt-8 rounded-lg text-white cursor-pointer"
@@ -59,7 +109,7 @@ export default () => {
 
         <div className="flex flex-col gap-y-8 mt-8 w-full justify-self-start px-8 text-3xl">
           <TaskList
-            tasks={tasks}
+            tasks={filteredTasks}
             handleDelete={deleteTask}
             handleEdit={(id) => {
               const task = tasks.find((task) => task._id === id);
@@ -72,8 +122,9 @@ export default () => {
         {addingTask ? (
           <Modal title="Enter a new task" onClose={() => setAddingTask(false)}>
             <TaskForm
-              addTasks={addTask}
-              tasks={tasks}
+              action={async (newTask) => {
+                await addTask(newTask);
+              }}
               onClose={() => setAddingTask(false)}
             />
           </Modal>
@@ -81,36 +132,16 @@ export default () => {
 
         {editingTask ? (
           <Modal title="Editing" onClose={() => setEditingTask(null)}>
-            <form
-              action={async (formData) => {
-                const newName = formData.get('edit-input').trim();
-                if (!newName) return;
-                await updateTask(editingTask._id, { name: newName });
-                setEditingTask(null);
+            <TaskForm
+              initialTask={editingTask}
+              action={async (updatedTask) => {
+                await updateTask(editingTask._id, updatedTask);
               }}
-            >
-              <input
-                type="text"
-                name="edit-input"
-                defaultValue={editingTask.name}
-                className="border rounded-lg p-2"
-              />
-              <div className="flex justify-end gap-4 mt-4">
-                <button
-                  type="button"
-                  onClick={() => setEditingTask(null)}
-                  className="px-4 py-2 bg-gray-400 rounded-lg text-white cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button className="px-4 py-2 bg-blue-500 rounded-lg text-white cursor-pointer">
-                  Save
-                </button>
-              </div>
-            </form>
+              onClose={() => setEditingTask(null)}
+            />
           </Modal>
         ) : null}
       </main>
-    </>
+    </div>
   );
 };

@@ -21,10 +21,7 @@ export default (user) => {
         if (localTasks.length > 0) {
           for (const task of localTasks) {
             const { _id, ...taskData } = task;
-            await taskService.create({
-              ...taskData,
-              userId: user._id,
-            });
+            await taskService.create(taskData);
           }
           storage.clearLocalTasks();
         }
@@ -38,14 +35,12 @@ export default (user) => {
     loadTasks();
   }, [user]);
 
-  const addTask = async (name) => {
+  const addTask = async (data) => {
     //Guest mode
     if (!user) {
       const newTask = {
+        ...data,
         _id: Date.now().toString(),
-        name,
-        completed: false,
-        priority: 'medium',
       };
       const updated = [...tasks, newTask];
       setTasks(updated);
@@ -55,12 +50,7 @@ export default (user) => {
 
     //Logged-in mode
     try {
-      const created = await taskService.create({
-        name,
-        completed: false,
-        priority: 'medium',
-        userId: user._id,
-      });
+      const created = await taskService.create(data);
       setTasks((prev) => [...prev, created]);
     } catch (err) {
       console.error('Error adding task: ', err);
@@ -98,13 +88,11 @@ export default (user) => {
 
     //Logged-in mode
     try {
-      const updatedTask = await taskService.update(id, {
-        ...data,
-        userId: user._id,
-      });
+      const updatedTask = await taskService.update(id, data);
+      const real = updatedTask.task || updatedTask;
       setTasks((prev) =>
         prev.map((task) => {
-          return task._id === id ? updatedTask : task;
+          return task._id === id ? real : task;
         })
       );
     } catch (err) {

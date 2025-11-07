@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { registerUser } from '../services/authService';
 
@@ -57,6 +58,15 @@ export default () => {
           <button className="border-1 border-solid px-8 py-4 rounded-lg text-xl mt-4 cursor-pointer bg-blue-500">
             Sign up
           </button>
+          <div className="flex justify-center items-center gap-4">
+            <span>Already have an account?</span>
+            <Link
+              to={'/login'}
+              className="border-1 border-solid rounded-3xl px-6 py-2"
+            >
+              Login
+            </Link>
+          </div>
         </form>
       </main>
     </>
