@@ -29,50 +29,36 @@ export default (props) => {
       className="fixed left-0 top-0 h-screen bg-tanager-bg border-r shadow-sm transition-all duration-300"
       style={{ width: currentWidth }}
     >
-      <nav
-        className={`h-full flex flex-col transition-all duration-300 ${
-          expanded ? 'items-stretch' : 'items-center'
-        }`}
-      >
-        <div
-          className={`p-4 pb-2 flex items-center w-full transition-all duration-300 ${
-            expanded ? 'justify-between' : 'justify-center'
-          }`}
-        >
-          {expanded ? (
-            <Link
-              className="flex items-center text-4xl gap-x-2 transition-all duration-300"
-              to="/"
-            >
+      <nav className="h-full flex flex-col">
+        <div className="p-3 pb-2 flex items-center w-full">
+          <div
+            className={`flex items-center gap-x-2 transition-all duration-300 overflow-hidden ${
+              expanded ? 'opacity-100 max-w-xs' : 'opacity-0 max-w-0'
+            }`}
+          >
+            <Link className="flex items-center h-12 text-4xl gap-x-2" to="/">
               <LuCircleCheckBig />
               <h1>Tanager</h1>
             </Link>
-          ) : null}
+          </div>
+
+          {expanded ? <div className="flex-1" /> : null}
+
           <button
             onClick={() => setExpanded((prev) => !prev)}
-            className="p-1.5 rounded-lg bg-gray-50 hover:bg-gray-100 text-4xl cursor-pointer transition-all duration-300"
+            className="flex items-center justify-center w-10 h-10 text-4xl rounded-lg bg-gray-50 hover:bg-gray-100 cursor-pointer transition-all duration-300 mx-auto"
           >
             {expanded ? <LuChevronFirst /> : <LuChevronLast />}
           </button>
         </div>
 
         <SidebarContext.Provider value={{ expanded }}>
-          <ul
-            className={`flex-1 px-3 transition-all duration-300 ${
-              expanded ? 'w-full items-start' : 'items-center px-0'
-            }`}
-          >
-            {props.children}
-          </ul>
+          <ul className="flex-1 flex flex-col px-3">{props.children}</ul>
         </SidebarContext.Provider>
 
-        <div
-          className={`border-t w-full flex items-center py-3 transition-all duration-300 ${
-            expanded ? 'px-4 justify-start' : 'justify-center'
-          }`}
-        >
+        <div className="border-t w-full flex items-center py-3 px-3 transition-all duration-300">
           {/* Avatar */}
-          <div className="flex justify-center items-center text-xl w-10 h-10 rounded-md bg-gray-500 flex-shrink-0">
+          <div className="flex justify-center items-center text-xl w-10 h-10 rounded-md bg-gray-500 flex-shrink-0 mx-auto">
             <span>{props.user ? getInitials(props.user.name) : 'NA'}</span>
           </div>
 
