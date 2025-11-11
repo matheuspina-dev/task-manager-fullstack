@@ -10,6 +10,7 @@ import Sidebar from '../components/Sidebar';
 import SidebarItem from '../components/SidebarItem';
 import { CiCalendarDate } from 'react-icons/ci';
 import ColorPalette from '../ColorPalette';
+import StatsPanel from '../components/StatsPanel';
 
 export default () => {
   const [user, setUser] = useState(null);
@@ -60,7 +61,7 @@ export default () => {
   return (
     <div className="flex">
       <header className="flex">
-        <Sidebar onWidthChange={setSidebarWidth} user={user}>
+        <Sidebar onWidthChange={setSidebarWidth} user={user} handleLogout={handleLogout}>
           <SidebarItem
             icon={<CiCalendarDate size={20} />}
             text="All"
@@ -82,8 +83,10 @@ export default () => {
           />
           <SidebarItem
             icon={<CiCalendarDate size={20} />}
-            text="Statisctics"
+            text="Statistics"
             alert
+            onClick={() => setActiveView('stats')}
+            active={activeView === 'stats'}
           />
           <hr className="my-3" />
           <SidebarItem icon={<CiCalendarDate size={20} />} text="Settings" />
@@ -100,26 +103,32 @@ export default () => {
         className="p-8 pt-20 min-h-screen w-screen transition-all duration-300"
         style={{ marginLeft: sidebarWidth }}
       >
-        <div>
-          <button
-            onClick={() => setAddingTask(true)}
-            className="bg-tanager-primary px-8 py-4 mt-8 rounded-lg text-white cursor-pointer"
-          >
-            Add Task
-          </button>
-        </div>
+        {activeView !== 'stats' ? (
+          <div>
+            <div>
+              <button
+                onClick={() => setAddingTask(true)}
+                className="bg-tanager-primary px-8 py-4 mt-8 rounded-lg text-white cursor-pointer"
+              >
+                Add Task
+              </button>
+            </div>
 
-        <div className="flex flex-col gap-y-8 mt-8 w-full justify-self-start px-8 text-3xl">
-          <TaskList
-            tasks={filteredTasks}
-            handleDelete={deleteTask}
-            handleEdit={(id) => {
-              const task = tasks.find((task) => task._id === id);
-              setEditingTask(task);
-            }}
-            toggleCompleted={toggleCompleted}
-          />
-        </div>
+            <div className="flex flex-col gap-y-8 mt-8 w-full justify-self-start px-8 text-3xl">
+              <TaskList
+                tasks={filteredTasks}
+                handleDelete={deleteTask}
+                handleEdit={(id) => {
+                  const task = tasks.find((task) => task._id === id);
+                  setEditingTask(task);
+                }}
+                toggleCompleted={toggleCompleted}
+              />
+            </div>
+          </div>
+        ) : (
+          <StatsPanel />
+        )}
 
         {addingTask ? (
           <Modal title="Enter a new task" onClose={() => setAddingTask(false)}>
