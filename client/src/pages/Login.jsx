@@ -1,32 +1,35 @@
-import { Link, useNavigate } from 'react-router-dom';
-import Navbar from '../components/Navbar';
-import { loginUser } from '../services/authService';
+import { Link, useNavigate } from "react-router-dom";
+import Navbar from "../components/Navbar";
+import { loginUser } from "../services/authService";
 
 export default () => {
   const navigate = useNavigate();
 
   const handleSubmit = async (formData) => {
-    const email = formData.get('email');
-    const password = formData.get('password');
+    const email = formData.get("email");
+    const password = formData.get("password");
 
     try {
       const res = await loginUser({ email, password });
-      localStorage.setItem('user', JSON.stringify(res.user));
-      navigate('/');
+      localStorage.setItem("user", JSON.stringify(res.user));
+      navigate("/");
     } catch (err) {
       console.error(err);
-      alert('Invalid credentials');
+      alert("Invalid credentials");
     }
   };
 
   return (
     <>
-      <header>
+      <header className="w-full">
         <Navbar />
       </header>
-      <main className="flex justify-center items-center flex-col mt-16">
-        <h1 className="text-3xl font-bold">Login</h1>
-        <form action={handleSubmit} className="flex flex-col mt-8 gap-y-4">
+      <main className="flex flex-col justify-center items-center h-screen">
+        <h1 className="text-3xl font-bold mb-8">Login</h1>
+        <form
+          action={handleSubmit}
+          className="flex flex-col gap-y-4 w-full max-w-md"
+        >
           <input
             type="email"
             placeholder="Enter your email"
@@ -46,7 +49,7 @@ export default () => {
           <div className="flex justify-center items-center gap-4">
             <span>Don't have an account?</span>
             <Link
-              to={'/register'}
+              to={"/register"}
               className="border-1 border-solid rounded-3xl px-8 py-2"
             >
               Sign up

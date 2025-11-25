@@ -1,25 +1,25 @@
-import { Link } from 'react-router-dom';
-import Navbar from '../components/Navbar';
-import { registerUser } from '../services/authService';
+import { Link } from "react-router-dom";
+import Navbar from "../components/Navbar";
+import { registerUser } from "../services/authService";
 
 export default () => {
   const handleSubmit = async (formData) => {
-    const name = formData.get('name');
-    const email = formData.get('email');
-    const confirmEmail = formData.get('confirm-email');
-    const password = formData.get('password');
+    const name = formData.get("name");
+    const email = formData.get("email");
+    const confirmEmail = formData.get("confirm-email");
+    const password = formData.get("password");
 
     if (email !== confirmEmail) {
-      alert('Emails do not match!');
+      alert("Emails do not match!");
       return;
     }
 
     try {
       await registerUser({ name, email, password });
-      alert('User registered successfully!');
+      alert("User registered successfully!");
     } catch (err) {
       console.log(err);
-      alert('Error registering user');
+      alert("Error registering user");
     }
   };
 
@@ -28,9 +28,12 @@ export default () => {
       <header>
         <Navbar />
       </header>
-      <main className="flex justify-center items-center flex-col mt-16">
-        <h1 className="text-3xl font-bold">Sign up</h1>
-        <form action={handleSubmit} className="flex flex-col mt-8 gap-y-4">
+      <main className="flex flex-col justify-center items-center h-screen">
+        <h1 className="text-3xl font-bold mb-8">Sign up</h1>
+        <form
+          action={handleSubmit}
+          className="flex flex-col gap-y-4 w-full max-w-md"
+        >
           <input
             type="text"
             placeholder="Enter your name"
@@ -61,7 +64,7 @@ export default () => {
           <div className="flex justify-center items-center gap-4">
             <span>Already have an account?</span>
             <Link
-              to={'/login'}
+              to={"/login"}
               className="border-1 border-solid rounded-3xl px-6 py-2"
             >
               Login
