@@ -1,0 +1,56 @@
+services:
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    volumes:
+      - mongo-data:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: task-manager
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.runCommand('ping').ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  server:
+    build:
+      context: ./server
+      target: deps
+    image: task-manager-server:dev
+    working_dir: /app
+    command: npx nodemon server.js
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./server/.env
+    environment:
+      MONGO_URI: mongodb://mongo:27017/task-manager
+      CLIENT_ORIGIN: http://localhost:5173
+    depends_on:
+      mongo:
+        condition: service_healthy
+    restart: unless-stopped
+
+  client:
+    build:
+      context: ./client
+      target: build
+    image: task-manager-client:dev
+    working_dir: /app
+    command: npx vite --host
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_API_URL: http://localhost:3000
+    depends_on:
+      - server
+    restart: unless-stopped
+
+volumes:
+  mongo-data:
